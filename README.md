@@ -67,3 +67,5 @@ API BUAT HELPDESK TICKETING
 | Body     | Type     | Description                           |
 | :------- | :------- | :------------------------------------ |
 | `status` | `string` | **Required**. open,in_progress,closed |
+
+### SUDAH TERMASUK AUTH JWT TOKEN
