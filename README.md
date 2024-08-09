@@ -17,7 +17,7 @@ API BUAT HELPDESK TICKETING
 #### Get SINGLE TICKET
 
 ```http
-  GET /api/items/{ticket_number}
+  GET /api/tickets/{ticket_number}
 ```
 
 | Parameter       | Type     | Description                                 |
@@ -42,7 +42,7 @@ API BUAT HELPDESK TICKETING
 #### Edit Ticket
 
 ```http
-  PUT /api/items/{ticket_number}
+  PUT /api/tickets/{ticket_number}
 ```
 
 | Parameter | Type     | Description   |
@@ -57,7 +57,7 @@ API BUAT HELPDESK TICKETING
 #### Edit Ticket STATUS
 
 ```http
-  PUT /api/items/{ticket_number}/status
+  PUT /api/tickets/{ticket_number}/status
 ```
 
 | Parameter | Type     | Description   |
