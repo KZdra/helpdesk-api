@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TicketController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +16,28 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
+    //Auth
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::post('me', [AuthController::class, 'me']);
+    //EndAuth
+
+    // GetAllTicket
+    Route::get('/tickets', [TicketController::class, 'getTickets']);
+    // POST NEW TICKET 
+    Route::post('/tickets', [TicketController::class, 'createTicket']);
+    // Update ticket
+    Route::put('/tickets/{ticket_number}', [TicketController::class, 'updateTicket']);
+
+    // Update ticket status
+    Route::put('/tickets/{ticket_number}/status', [TicketController::class, 'updateTicketStatus']);
+
+    // Delete ticket
+    Route::delete('/tickets/{ticket_number}', [TicketController::class, 'deleteTicket']);
+
+    // Get a single ticket by ticket_number (Details)
+    Route::get('/tickets/{ticket_number}', [TicketController::class, 'getTicket']);
 });

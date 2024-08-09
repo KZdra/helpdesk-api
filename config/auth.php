@@ -13,10 +13,10 @@ return [
     |
     */
 
-    'defaults' => [
-        'guard' => 'web',
-        'passwords' => 'users',
-    ],
+   'defaults' => [
+    'guard' => 'api',
+    'passwords' => 'users',
+],
 
     /*
     |--------------------------------------------------------------------------
@@ -34,13 +34,12 @@ return [
     | Supported: "session"
     |
     */
-
-    'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+'guards' => [
+    'api' => [
+        'driver' => 'jwt',
+        'provider' => 'users',
     ],
+],
 
     /*
     |--------------------------------------------------------------------------
