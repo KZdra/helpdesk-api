@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\KategoriController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,17 +28,26 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 
     // GetAllTicket
     Route::get('/tickets', [TicketController::class, 'getTickets']);
-    // POST NEW TICKET 
+    // POST NEW TICKET
     Route::post('/tickets', [TicketController::class, 'createTicket']);
     // Update ticket
-    Route::put('/tickets/{ticket_number}', [TicketController::class, 'updateTicket']);
+    // Route::put('/tickets/{ticket_number}', [TicketController::class, 'updateTicket']);
 
     // Update ticket status
-    Route::put('/tickets/{ticket_number}/status', [TicketController::class, 'updateTicketStatus']);
+    Route::put('/tickets/{ticket_number}', [TicketController::class, 'updateTicketStatus']);
 
     // Delete ticket
     Route::delete('/tickets/{ticket_number}', [TicketController::class, 'deleteTicket']);
 
     // Get a single ticket by ticket_number (Details)
     Route::get('/tickets/{ticket_number}', [TicketController::class, 'getTicket']);
+    //Download Attachment
+    Route::get('/tickets/download/{ticket_number}', [TicketController::class, 'downloadAttachment']);
+
+
+    //
+    Route::post('/kategoris', [KategoriController::class, 'createKategori']);
+    Route::get('/kategoris', [KategoriController::class, 'getKategoris']);
+    Route::put('/kategoris/{id}', [KategoriController::class, 'updateKategori']);
+    Route::delete('/kategoris/{id}', [KategoriController::class, 'deleteKategori']);
 });
