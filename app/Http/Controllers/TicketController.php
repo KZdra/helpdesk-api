@@ -79,7 +79,7 @@ class TicketController extends Controller
             $newTicketId = DB::table('tickets')->insertGetId([
                 'user_id' => $userId,
                 'status' => 'open',
-                'kategori_id'=> $request->kategori,
+                'kategori_id'=> $request->kategori_id,
                 'issue' => $request->issue,
                 'subject'=>$request->subject,
                 'attachment' => $filePath, // Save the file path to the database
