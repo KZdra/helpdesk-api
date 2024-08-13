@@ -49,5 +49,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('/kategoris', [KategoriController::class, 'createKategori']);
     Route::get('/kategoris', [KategoriController::class, 'getKategoris']);
     Route::put('/kategoris/{id}', [KategoriController::class, 'updateKategori']);
+    Route::get('/kategoris/{id}', [KategoriController::class, 'getKategori']);
+
     Route::delete('/kategoris/{id}', [KategoriController::class, 'deleteKategori']);
 });
