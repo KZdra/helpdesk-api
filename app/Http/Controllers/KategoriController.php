@@ -56,6 +56,15 @@ class KategoriController extends Controller
             return response()->json(['error' => 'Failed to retrieve kategoris. Please try again.'], 500);
         }
     }
+    public function getKategori(Request $request, $id) 
+    {
+        try {
+            $kategoris = DB::table('kategoris')->where('id',$id)->get();
+            return response()->json($kategoris, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to retrieve kategoris. Please try again.'], 500);
+        }
+    }
 
     // Update a category
     public function updateKategori(Request $request, $id)
