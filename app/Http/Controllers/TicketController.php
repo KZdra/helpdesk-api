@@ -58,7 +58,7 @@ class TicketController extends Controller
         // Validate the request input including the file
         $request->validate([
             'issue' => 'required|string',
-            'attachment' => 'nullable|file|mimes:jpg,png,pdf,docx,zip,xlsm,xlsx,txt|max:2048', // Allow specific file types and limit the file size
+            'attachment' => 'nullable|file', // Allow specific file types and limit the file size
         ]);
 
         DB::beginTransaction();
@@ -67,8 +67,13 @@ class TicketController extends Controller
             // Handle file upload if it exists
             $filePath = null;
             if ($request->hasFile('attachment')) {
-                $filePath = $request->file('attachment')->store('attachments', 'public');
+                // Get the original file name
+                $originalFileName = $request->file('attachment')->getClientOriginalName();
+                
+                // Store the file with the original name
+                $filePath = $request->file('attachment')->storeAs('attachments', $originalFileName, 'public');
             }
+            
 
             // Create a new ticket
             $newTicketId = DB::table('tickets')->insertGetId([
