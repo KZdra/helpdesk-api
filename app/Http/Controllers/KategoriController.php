@@ -58,6 +58,15 @@ class KategoriController extends Controller
             return $this->errorResponse('Failed to retrieve kategoris. Please try again.', 500);
         }
     }
+    public function getActiveKategoris()
+    {
+        try {
+            $kategoris = DB::table('kategoris')->where('status', 'active')->get();
+            return $this->successResponse($kategoris);
+        } catch (\Exception $e) {
+            return $this->errorResponse('Failed to retrieve kategoris. Please try again.', 500);
+        }
+    }
 
     public function getKategori($id)
     {
