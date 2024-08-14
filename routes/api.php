@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -54,4 +55,15 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::get('/kategoris/{id}', [KategoriController::class, 'getKategori']);
     
     Route::delete('/kategoris/{id}', [KategoriController::class, 'deleteKategori']);
+
+    //USERs Fetch
+    Route::get('/users', [AuthController::class,'getUsers']);
+    Route::get('/users/{id}', [AuthController::class, 'getUser']);
+    Route::put('/users/{id}', [AuthController::class, 'updateUser']);
+    Route::delete('/users/{id}', [AuthController::class,'deleteUser']);
+
+    //report
+    Route::get('/report', [ReportController::class, 'showReport']);
+
+
 });
