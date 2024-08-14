@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Traits\ApiResponse;
 
 class KategoriController extends Controller
 {
+    use ApiResponse;
 
     public function __construct()
     {
@@ -23,7 +25,7 @@ class KategoriController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
+            return $this->errorResponse('Validation errors', 400, $validator->errors());
         }
 
         DB::beginTransaction();
@@ -38,11 +40,11 @@ class KategoriController extends Controller
 
             DB::commit();
 
-            return response()->json(['message' => 'Kategori created successfully'], 201);
+            return $this->successResponse(null, 'Kategori created successfully', 201);
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return response()->json(['error' => 'Kategori creation failed. Please try again.'], 500);
+            return $this->errorResponse('Kategori creation failed. Please try again.', 500);
         }
     }
 
@@ -51,18 +53,22 @@ class KategoriController extends Controller
     {
         try {
             $kategoris = DB::table('kategoris')->get();
-            return response()->json($kategoris, 200);
+            return $this->successResponse($kategoris);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to retrieve kategoris. Please try again.'], 500);
+            return $this->errorResponse('Failed to retrieve kategoris. Please try again.', 500);
         }
     }
-    public function getKategori(Request $request, $id) 
+
+    public function getKategori($id)
     {
         try {
-            $kategoris = DB::table('kategoris')->where('id',$id)->get();
-            return response()->json($kategoris, 200);
+            $kategori = DB::table('kategoris')->where('id', $id)->first();
+            if (!$kategori) {
+                return $this->errorResponse('Kategori not found', 404);
+            }
+            return $this->successResponse($kategori);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to retrieve kategoris. Please try again.'], 500);
+            return $this->errorResponse('Failed to retrieve kategori. Please try again.', 500);
         }
     }
 
@@ -75,7 +81,7 @@ class KategoriController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
+            return $this->errorResponse('Validation errors', 400, $validator->errors());
         }
 
         DB::beginTransaction();
@@ -84,7 +90,7 @@ class KategoriController extends Controller
             $kategori = DB::table('kategoris')->where('id', $id)->first();
 
             if (!$kategori) {
-                return response()->json(['error' => 'Kategori not found'], 404);
+                return $this->errorResponse('Kategori not found', 404);
             }
 
             DB::table('kategoris')
@@ -97,11 +103,11 @@ class KategoriController extends Controller
 
             DB::commit();
 
-            return response()->json(['message' => 'Kategori updated successfully'], 200);
+            return $this->successResponse(null, 'Kategori updated successfully');
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return response()->json(['error' => 'Kategori update failed. Please try again.'], 500);
+            return $this->errorResponse('Kategori update failed. Please try again.', 500);
         }
     }
 
@@ -114,18 +120,18 @@ class KategoriController extends Controller
             $kategori = DB::table('kategoris')->where('id', $id)->first();
 
             if (!$kategori) {
-                return response()->json(['error' => 'Kategori not found'], 404);
+                return $this->errorResponse('Kategori not found', 404);
             }
 
             DB::table('kategoris')->where('id', $id)->delete();
 
             DB::commit();
 
-            return response()->json(['message' => 'Kategori deleted successfully'], 200);
+            return $this->successResponse(null, 'Kategori deleted successfully');
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return response()->json(['error' => 'Kategori deletion failed. Please try again.'], 500);
+            return $this->errorResponse('Kategori deletion failed. Please try again.', 500);
         }
     }
 }

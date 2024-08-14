@@ -2,52 +2,56 @@
 
 namespace App\Traits;
 
-use Illuminate\Http\JsonResponse;
-
 trait ApiResponse
 {
     /**
-     * Send a success response
+     * Return a success response.
      *
      * @param mixed $data
      * @param string $message
-     * @param int $status
+     * @param int $statusCode
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function successResponse($data, $message = 'Operation Successful', $status = 200): JsonResponse
+    protected function successResponse($data, $message = 'Operation successful', $statusCode = 200)
     {
         return response()->json([
-            'status' => true,
+            'success' => true,
             'message' => $message,
             'data' => $data
-        ], $status);
+        ], $statusCode);
     }
 
     /**
-     * Send an error response
+     * Return an error response.
      *
      * @param string $message
-     * @param int $status
-     * @param mixed $data
+     * @param int $statusCode
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function errorResponse($message = 'Operation Failed', $status = 400, $data = null): JsonResponse
+    protected function errorResponse($message, $statusCode = 500)
     {
         return response()->json([
-            'status' => false,
+            'success' => false,
             'message' => $message,
-            'data' => $data
-        ], $status);
+            'data' => null
+        ], $statusCode);
     }
 
     /**
-     * Send a response after adding a todo
+     * Return a custom response.
      *
+     * @param bool $success
      * @param mixed $data
+     * @param string $message
+     * @param int $statusCode
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function todoAddedResponse($data): JsonResponse
+    protected function customResponse($success, $data, $message, $statusCode)
     {
-        return $this->successResponse($data, 'Todo added successfully');
+        return response()->json([
+            'success' => $success,
+            'message' => $message,
+            'data' => $data
+        ], $statusCode);
     }
 }
