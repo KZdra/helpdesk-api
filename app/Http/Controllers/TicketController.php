@@ -76,6 +76,7 @@ class TicketController extends Controller
                 'issue' => $request->issue,
                 'subject'=>$request->subject,
                 'attachment' => $filePath,
+                'attachment_name'=> $originalFileName,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -91,7 +92,7 @@ class TicketController extends Controller
             return $this->successResponse(['ticket_number' => $ticketNumber, 'attachment_url' => asset("storage/{$filePath}")], 'Ticket created successfully', 201);
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->errorResponse('Ticket creation failed. Please try again.');
+            return $this->errorResponse($e);
         }
     }
 
@@ -166,7 +167,7 @@ class TicketController extends Controller
                 return $this->errorResponse('Attachment not found', 404);
             }
 
-            return response()->download(public_path("storage/{$ticket->attachment}"));
+  return response()->download(public_path("storage/{$ticket->attachment}"));
         } catch (\Exception $e) {
             return $this->errorResponse('Failed to download attachment. Please try again.');
         }

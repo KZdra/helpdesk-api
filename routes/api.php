@@ -41,16 +41,17 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 
     // Get a single ticket by ticket_number (Details)
     Route::get('/tickets/{ticket_number}', [TicketController::class, 'getTicket']);
+    
     //Download Attachment
     Route::get('/tickets/download/{ticket_number}', [TicketController::class, 'downloadAttachment']);
-
-
+    
+    
     //
     Route::post('/kategoris', [KategoriController::class, 'createKategori']);
     Route::get('/kategoris', [KategoriController::class, 'getKategoris']);
     Route::get('/activekategoris', [KategoriController::class, 'getActiveKategoris']);
     Route::put('/kategoris/{id}', [KategoriController::class, 'updateKategori']);
     Route::get('/kategoris/{id}', [KategoriController::class, 'getKategori']);
-
+    
     Route::delete('/kategoris/{id}', [KategoriController::class, 'deleteKategori']);
 });
