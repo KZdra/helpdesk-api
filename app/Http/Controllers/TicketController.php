@@ -30,6 +30,11 @@ class TicketController extends Controller
                 return $this->errorResponse('Ticket not found', 404);
             }
 
+            if ($ticket->attachment) {
+                $ticket->attachment_url = url('storage/' . $ticket->attachment);
+            }
+    
+
             return $this->successResponse($ticket);
         } catch (\Exception $e) {
             return $this->errorResponse('Failed to retrieve ticket. Please try again.');
@@ -45,6 +50,13 @@ class TicketController extends Controller
                 ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name')
                 ->get();
 
+
+                foreach ($tickets as $ticket) {
+                    if ($ticket->attachment) {
+                        $ticket->attachment_url = url('storage/' . $ticket->attachment);
+                    }
+                }
+        
             return $this->successResponse($tickets);
         } catch (\Exception $e) {
             return $this->errorResponse('Failed to retrieve tickets. Please try again.');
