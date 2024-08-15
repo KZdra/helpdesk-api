@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 class ReportController extends Controller
 {
     use ApiResponse;
+
     public function showReport(Request $request)
     {
         $option = $request->input('option');
@@ -18,18 +19,27 @@ class ReportController extends Controller
 
         switch ($option) {
             case 'all':
-                $data = DB::table('tickets')->get();
-                break;
-                
-            case 'date':
                 $data = DB::table('tickets')
-                    ->whereBetween('created_at', [$startDate, $endDate])
+                    ->join('users', 'tickets.user_id', '=', 'users.id')
+                    ->join('kategoris', 'tickets.kategori_id', '=', 'kategoris.id')
+                    ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name')
                     ->get();
                 break;
-                
+                case 'date':
+                    $data = DB::table('tickets')
+                        ->whereBetween('tickets.created_at', [$startDate, $endDate])
+                        ->join('users', 'tickets.user_id', '=', 'users.id')
+                        ->join('kategoris', 'tickets.kategori_id', '=', 'kategoris.id')
+                        ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name')
+                        ->get();
+                    break;
+
             case 'category':
                 $data = DB::table('tickets')
                     ->where('kategori_id', $category_id)
+                    ->join('users', 'tickets.user_id', '=', 'users.id')
+                    ->join('kategoris', 'tickets.kategori_id', '=', 'kategoris.id')
+                    ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name')
                     ->get();
                 break;
 
