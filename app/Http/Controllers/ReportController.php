@@ -25,14 +25,16 @@ class ReportController extends Controller
                     ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name')
                     ->get();
                 break;
-                case 'date':
-                    $data = DB::table('tickets')
-                        ->whereBetween('tickets.created_at', [$startDate, $endDate])
-                        ->join('users', 'tickets.user_id', '=', 'users.id')
-                        ->join('kategoris', 'tickets.kategori_id', '=', 'kategoris.id')
-                        ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name')
-                        ->get();
-                    break;
+            case 'date':
+                $data = DB::table('tickets')
+                    ->whereDate('tickets.created_at', '>=', $startDate)
+                    ->whereDate('tickets.created_at', '<=', $endDate)
+
+                    ->join('users', 'tickets.user_id', '=', 'users.id')
+                    ->join('kategoris', 'tickets.kategori_id', '=', 'kategoris.id')
+                    ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name')
+                    ->get();
+                break;
 
             case 'category':
                 $data = DB::table('tickets')

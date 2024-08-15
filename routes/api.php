@@ -38,8 +38,8 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
         Route::get('/{ticket_number}', [TicketController::class, 'getTicket']);
         Route::get('/download/{ticket_number}', [TicketController::class, 'downloadAttachment']);
     });
-    
-    
+
+
     //
     Route::prefix('kategoris')->group(function () {
 
@@ -52,21 +52,20 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     });
     //Users
     Route::prefix('users')->group(function () {
-        Route::get('/', [AuthController::class,'getUsers']);
+        Route::get('/', [AuthController::class, 'getUsers']);
         Route::get('/{id}', [AuthController::class, 'getUser']);
         Route::put('/{id}', [AuthController::class, 'updateUser']);
-        Route::delete('/{id}', [AuthController::class,'deleteUser']);
+        Route::delete('/{id}', [AuthController::class, 'deleteUser']);
     });
     //USERs Fetch
-   
+
 
     //report
     Route::get('/report', [ReportController::class, 'showReport']);
 
     route::prefix('comment')->group(function () {
-        Route::get('/{ticket_id}', [CommentController::class,'getComments']);
-        Route::post('/', [CommentController::class,'createComment']);
+        Route::get('/{ticket_id}', [CommentController::class, 'getComments']);
+        Route::post('/', [CommentController::class, 'createComment']);
+        Route::get('/download/{id}', [CommentController::class, 'downloadCommentAttachment']);
     });
-
-
 });
