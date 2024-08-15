@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\ReportController;
@@ -61,6 +62,11 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 
     //report
     Route::get('/report', [ReportController::class, 'showReport']);
+
+    route::prefix('comment')->group(function () {
+        Route::get('/{ticket_id}', [CommentController::class,'getComments']);
+        Route::post('/', [CommentController::class,'createComment']);
+    });
 
 
 });
