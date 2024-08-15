@@ -23,6 +23,7 @@ class CommentController extends Controller
                 ->join('users', 'comments.user_id', '=', 'users.id')
                 ->where('comments.ticket_id', $ticket_id)
                 ->select('comments.*', 'users.name as user_name')
+                ->orderBy('comments.created_at','asc')
                 ->get();
 
 
