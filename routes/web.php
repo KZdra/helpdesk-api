@@ -14,8 +14,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return response()->json([
-        'PHP Version'=> phpversion(),
-        'Laravel' => '8'
-    ]);
+    // return response()->json([
+    //     'PHP Version'=> phpversion(),
+    //     'Laravel' => app()->version(),
+    // ]);
+
+    return view('welcome');
 });

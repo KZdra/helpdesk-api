@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,31 +28,44 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('me', [AuthController::class, 'me']);
     //EndAuth
 
-    // GetAllTicket
-    Route::get('/tickets', [TicketController::class, 'getTickets']);
-    // POST NEW TICKET
-    Route::post('/tickets', [TicketController::class, 'createTicket']);
-    // Update ticket
-    // Route::put('/tickets/{ticket_number}', [TicketController::class, 'updateTicket']);
+    // Tickets
+    Route::prefix('tickets')->group(function () {
 
-    // Update ticket status
-    Route::put('/tickets/{ticket_number}', [TicketController::class, 'updateTicketStatus']);
-
-    // Delete ticket
-    Route::delete('/tickets/{ticket_number}', [TicketController::class, 'deleteTicket']);
-
-    // Get a single ticket by ticket_number (Details)
-    Route::get('/tickets/{ticket_number}', [TicketController::class, 'getTicket']);
-    //Download Attachment
-    Route::get('/tickets/download/{ticket_number}', [TicketController::class, 'downloadAttachment']);
+        Route::get('/', [TicketController::class, 'getTickets']);
+        Route::post('/', [TicketController::class, 'createTicket']);
+        Route::put('/{ticket_number}', [TicketController::class, 'updateTicketStatus']);
+        Route::delete('/{ticket_number}', [TicketController::class, 'deleteTicket']);
+        Route::get('/{ticket_number}', [TicketController::class, 'getTicket']);
+        Route::get('/download/{ticket_number}', [TicketController::class, 'downloadAttachment']);
+    });
 
 
     //
-    Route::post('/kategoris', [KategoriController::class, 'createKategori']);
-    Route::get('/kategoris', [KategoriController::class, 'getKategoris']);
-    Route::get('/activekategoris', [KategoriController::class, 'getActiveKategoris']);
-    Route::put('/kategoris/{id}', [KategoriController::class, 'updateKategori']);
-    Route::get('/kategoris/{id}', [KategoriController::class, 'getKategori']);
+    Route::prefix('kategoris')->group(function () {
 
-    Route::delete('/kategoris/{id}', [KategoriController::class, 'deleteKategori']);
+        Route::post('/', [KategoriController::class, 'createKategori']);
+        Route::get('/', [KategoriController::class, 'getKategoris']);
+        Route::get('/active', [KategoriController::class, 'getActiveKategoris']);
+        Route::put('/{id}', [KategoriController::class, 'updateKategori']);
+        Route::get('/{id}', [KategoriController::class, 'getKategori']);
+        Route::delete('/{id}', [KategoriController::class, 'deleteKategori']);
+    });
+    //Users
+    Route::prefix('users')->group(function () {
+        Route::get('/', [AuthController::class, 'getUsers']);
+        Route::get('/{id}', [AuthController::class, 'getUser']);
+        Route::put('/{id}', [AuthController::class, 'updateUser']);
+        Route::delete('/{id}', [AuthController::class, 'deleteUser']);
+    });
+    //USERs Fetch
+
+
+    //report
+    Route::get('/report', [ReportController::class, 'showReport']);
+
+    route::prefix('comment')->group(function () {
+        Route::get('/{ticket_id}', [CommentController::class, 'getComments']);
+        Route::post('/', [CommentController::class, 'createComment']);
+        Route::get('/download/{id}', [CommentController::class, 'downloadCommentAttachment']);
+    });
 });
