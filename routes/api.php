@@ -38,13 +38,13 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
         Route::get('/download/{ticket_number}', [TicketController::class, 'downloadAttachment']);
     });
     // Kategori routes...
-    Route::prefix('kategoris')->middleware('roleCheck:admin')->group(function () {
-        Route::post('/', [KategoriController::class, 'createKategori']);
-        Route::get('/', [KategoriController::class, 'getKategoris']);
+    Route::prefix('kategoris')->group(function () {
+        Route::post('/', [KategoriController::class, 'createKategori'])->middleware('roleCheck:admin');
+        Route::get('/', [KategoriController::class, 'getKategoris'])->middleware('roleCheck:admin');
         Route::get('/active', [KategoriController::class, 'getActiveKategoris']);
-        Route::put('/{id}', [KategoriController::class, 'updateKategori']);
-        Route::get('/{id}', [KategoriController::class, 'getKategori']);
-        Route::delete('/{id}', [KategoriController::class, 'deleteKategori']);
+        Route::put('/{id}', [KategoriController::class, 'updateKategori'])->middleware('roleCheck:admin');
+        Route::get('/{id}', [KategoriController::class, 'getKategori'])->middleware('roleCheck:admin');
+        Route::delete('/{id}', [KategoriController::class, 'deleteKategori'])->middleware('roleCheck:admin');
     });
 
     // Users routes...
