@@ -15,7 +15,6 @@ class CommentController extends Controller
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
-    // Get all comments for a specific ticket
     public function getComments($ticket_id)
     {
         try {
@@ -41,7 +40,6 @@ class CommentController extends Controller
 
 
 
-    // Create a new comment
     public function createComment(Request $request)
     {
 
@@ -74,7 +72,6 @@ class CommentController extends Controller
                 'attachment' => $filePath,
                 'attachment_name' => $originalFileName,
                 'created_at' => now(),
-                'updated_at' => now(),
             ];
 
 

@@ -90,7 +90,6 @@ class TicketController extends Controller
                 'attachment' => $filePath,
                 'attachment_name'=> $originalFileName,
                 'created_at' => now(),
-                'updated_at' => now(),
             ]);
 
             $ticketNumber = 'TIX-' . str_pad($newTicketId, 4, '0', STR_PAD_LEFT);

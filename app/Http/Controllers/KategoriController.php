@@ -16,7 +16,6 @@ class KategoriController extends Controller
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
-    // Create a new category
     public function createKategori(Request $request)
     {
         $validator = Validator::make($request->all(), [
