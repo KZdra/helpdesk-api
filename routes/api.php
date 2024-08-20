@@ -50,6 +50,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     // Users routes...
     Route::prefix('users')->middleware('roleCheck:1')->group(function () {
         Route::get('/', [AuthController::class, 'getUsers']);
+        Route::get('/roles', [AuthController::class,'getRoles']);
         Route::get('/{id}', [AuthController::class, 'getUser']);
         Route::put('/{id}', [AuthController::class, 'updateUser']);
         Route::delete('/{id}', [AuthController::class, 'deleteUser']);

@@ -28,10 +28,17 @@ class AuthController extends Controller
      */
 
     
-    public function getUsers(){
-        $users = DB::table('users')->select('id','name','role','email')->get();
+     public function getUsers() {
+        $users = DB::table('users')->select('id', 'name', 'email', 'role_id')->get();
+    
+        foreach ($users as $user) {
+            $role = DB::table('roles')->where('id', $user->role_id)->value('name');
+            $user->role = $role;
+        }
+    
         return response()->json($users);
     }
+    
     public function getUser($id) {
         $user = DB::table('users')->where('id', $id)->first();
         if ($user) {
@@ -42,7 +49,15 @@ class AuthController extends Controller
 
     }
     
-    
+    public function getRoles(){
+        $role = DB::table('roles')->get();
+        if ($role) {
+            return response()->json($role);
+        } else {
+            return response()->json(['message' => 'role not found'], 404);
+        }
+
+    }
     //  public function register()
     // {
     //     $validate = Validator::make(request()->all(), [

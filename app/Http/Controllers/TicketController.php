@@ -98,7 +98,7 @@ class TicketController extends Controller
 
             DB::commit();
 
-            return $this->successResponse(['ticket_number' => $ticketNumber, 'attachment_url' => asset("storage/{$filePath}")], 'Ticket created successfully', 201);
+            return $this->successResponse(['ticket_number' => $ticketNumber], 'Ticket created successfully', 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->errorResponse($e);
