@@ -34,7 +34,6 @@ class KategoriController extends Controller
                 'nama_kategori' => $request->nama_kategori,
                 'status' => $request->status,
                 'created_at' => now(),
-                'updated_at' => now(),
             ]);
 
             DB::commit();

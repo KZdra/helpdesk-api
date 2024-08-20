@@ -43,32 +43,32 @@ class AuthController extends Controller
     }
     
     
-     public function register()
-    {
-        $validate = Validator::make(request()->all(), [
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required',
+    //  public function register()
+    // {
+    //     $validate = Validator::make(request()->all(), [
+    //         'name' => 'required',
+    //         'email' => 'required|email|unique:users',
+    //         'password' => 'required',
 
-        ]);
+    //     ]);
 
-        if ($validate->fails()) {
-            return response()->json($validate->messages());
-        }
+    //     if ($validate->fails()) {
+    //         return response()->json($validate->messages());
+    //     }
 
-        $user = User::create([
-            'name' => request('name'),
-            'email' => request('email'),
-            'role' => 'client',
-            'password' => Hash::make(request('password')),
-        ]);
+    //     $user = User::create([
+    //         'name' => request('name'),
+    //         'email' => request('email'),
+    //         'role' => 'client',
+    //         'password' => Hash::make(request('password')),
+    //     ]);
 
-        if ($user) {
-            return response()->json(['message' => 'Registrasi Sukses']);
-        } else {
-            return response()->json(['message' => 'Gagal']);
-        }
-    }
+    //     if ($user) {
+    //         return response()->json(['message' => 'Registrasi Sukses']);
+    //     } else {
+    //         return response()->json(['message' => 'Gagal']);
+    //     }
+    // }
 
     
     public function updateUser($id)
@@ -77,7 +77,7 @@ class AuthController extends Controller
         $validate = Validator::make(request()->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $id,
-            'role' => 'required',
+            'role_id' => 'required',
         ]);
     
         // If validation fails, return the error messages
@@ -102,29 +102,23 @@ class AuthController extends Controller
             $data = [
                 'name' => request('name'),
                 'email' => request('email'),
-                'role' => request('role'),
+                'role_id' => request('role_id'),
             ];
     
-            // If password is provided, hash it and include in the update data
             if (request('password')) {
                 $data['password'] = Hash::make(request('password'));
             }
     
-            // Update the user in the database
             $updated = DB::table('users')
                 ->where('id', $id)
                 ->update($data);
     
-            // Check if the update was successful
             if ($updated) {
-                DB::commit(); // Commit the transaction
+                DB::commit(); 
                 return response()->json(['message' => 'User updated successfully']);
-            } else {
-                DB::rollBack(); // Rollback the transaction
-                return response()->json(['message' => 'Failed to update user'], 500);
-            }
+            } 
         } catch (\Exception $e) {
-            DB::rollBack(); // Rollback the transaction on error
+            DB::rollBack(); 
             return response()->json(['message' => 'Failed to update user', 'error' => $e->getMessage()], 500);
         }
     }
@@ -149,6 +143,8 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         $user= auth()->user();
+        $role = DB::table('roles')->where('id', $user->role_id)->value('name');
+        $user->role =$role;
         return $this->respondWithToken($token,$user);
     }
     
@@ -181,7 +177,10 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth()->refresh(),auth()->user());
+        $user= auth()->user();
+        $role = DB::table('roles')->where('id', $user->role_id)->value('name');
+        $user->role =$role;
+        return $this->respondWithToken(auth()->refresh(),$user);
     }
 
     /**

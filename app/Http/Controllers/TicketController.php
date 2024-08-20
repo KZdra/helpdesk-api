@@ -31,7 +31,7 @@ class TicketController extends Controller
             }
 
             if ($ticket->attachment) {
-                $ticket->attachment_url = url('storage/' . $ticket->attachment);
+                $ticket->attachment_url = url('storage/attachments/' . $ticket->attachment);
             }
     
 
@@ -53,7 +53,7 @@ class TicketController extends Controller
 
                 foreach ($tickets as $ticket) {
                     if ($ticket->attachment) {
-                        $ticket->attachment_url = url('storage/' . $ticket->attachment);
+                        $ticket->attachment_url = url('storage/attachments/' . $ticket->attachment);
                     }
                 }
         
@@ -75,7 +75,6 @@ class TicketController extends Controller
         DB::beginTransaction();
 
         try {
-            $filePath = null;
             if ($request->hasFile('attachment')) {
                 $originalFileName = $request->file('attachment')->getClientOriginalName();
                 $filePath = $request->file('attachment')->storeAs('attachments', $originalFileName, 'public');
@@ -87,8 +86,7 @@ class TicketController extends Controller
                 'kategori_id'=> $request->kategori_id,
                 'issue' => $request->issue,
                 'subject'=>$request->subject,
-                'attachment' => $filePath,
-                'attachment_name'=> $originalFileName,
+                'attachment' => $originalFileName,
                 'created_at' => now(),
             ]);
 
@@ -151,7 +149,7 @@ class TicketController extends Controller
             }
 
             if ($ticket->attachment) {
-                Storage::disk('public')->delete($ticket->attachment);
+                Storage::disk('public')->delete("attachments/{$ticket->attachments}");
             }
 
             DB::table('tickets')
@@ -178,7 +176,7 @@ class TicketController extends Controller
                 return $this->errorResponse('Attachment not found', 404);
             }
 
-  return response()->download(public_path("storage/{$ticket->attachment}"));
+  return response()->download(public_path("storage/attachments/{$ticket->attachment}"));
         } catch (\Exception $e) {
             return $this->errorResponse('Failed to download attachment. Please try again.');
         }

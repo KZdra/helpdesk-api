@@ -21,7 +21,6 @@ class CreateTicketsTable extends Migration
             $table->unsignedBigInteger('kategori_id');
             $table->string('subject');
             $table->text('issue');
-            $table->string('attachment_name')->nullable(); 
             $table->string('attachment')->nullable(); 
             $table->string('assign_by')->nullable();
             $table->timestamps();

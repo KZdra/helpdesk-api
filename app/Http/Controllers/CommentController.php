@@ -28,7 +28,7 @@ class CommentController extends Controller
 
             foreach ($comments as $comment) {
                 if ($comment->attachment) {
-                    $comment->attachment_url = url('storage/' . $comment->attachment);
+                    $comment->attachment_url = url('storage/attachments/' . $comment->attachment);
                 }
             }
 
@@ -57,10 +57,9 @@ class CommentController extends Controller
         DB::beginTransaction();
 
         try {
-            $filePath = null;
             if ($request->hasFile('attachment')) {
                 $originalFileName = $request->file('attachment')->getClientOriginalName();
-                $filePath = $request->file('attachment')->storeAs('attachments', $originalFileName, 'public');
+                $request->file('attachment')->storeAs('attachments', $originalFileName, 'public');
             } else {
                 $originalFileName = null;
             }
@@ -69,14 +68,12 @@ class CommentController extends Controller
                 'ticket_id' => $request->ticket_id,
                 'user_id' => $userId,
                 'comment' => $request->comment,
-                'attachment' => $filePath,
-                'attachment_name' => $originalFileName,
+                'attachment' => $originalFileName,
                 'created_at' => now(),
             ];
 
 
-            $commentId = DB::table('comments')->insertGetId($commentData);
-
+            DB::table('comments')->insertGetId($commentData);
             DB::commit();
 
             return response()->json(['message' => 'Success'], 201);
@@ -96,7 +93,7 @@ class CommentController extends Controller
                 return $this->errorResponse('Attachment not found', 404);
             }
 
-            return response()->download(public_path("storage/{$comment->attachment}"));
+            return response()->download(public_path("storage/attachments/{$comment->attachment}"));
         } catch (\Exception $e) {
             return $this->errorResponse('Failed to download attachment. Please try again.');
         }
