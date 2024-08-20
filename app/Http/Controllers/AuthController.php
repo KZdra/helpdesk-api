@@ -58,32 +58,33 @@ class AuthController extends Controller
         }
 
     }
-    //  public function register()
-    // {
-    //     $validate = Validator::make(request()->all(), [
-    //         'name' => 'required',
-    //         'email' => 'required|email|unique:users',
-    //         'password' => 'required',
-
-    //     ]);
-
-    //     if ($validate->fails()) {
-    //         return response()->json($validate->messages());
-    //     }
-
-    //     $user = User::create([
-    //         'name' => request('name'),
-    //         'email' => request('email'),
-    //         'role' => 'client',
-    //         'password' => Hash::make(request('password')),
-    //     ]);
-
-    //     if ($user) {
-    //         return response()->json(['message' => 'Registrasi Sukses']);
-    //     } else {
-    //         return response()->json(['message' => 'Gagal']);
-    //     }
-    // }
+    public function register()
+    {
+        $validate = Validator::make(request()->all(), [
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required',
+            'role_id' => 'required', // Ensure role_id is provided and exists in the roles table
+        ]);
+    
+        if ($validate->fails()) {
+            return response()->json($validate->messages(), 400);
+        }
+    
+        try {
+            DB::table('users')->insert([
+                'name'=> request('name'),
+                'email'=> request('email'),
+                'role_id'=> request('role_id'),
+                'password'=> Hash::make(request('password')),
+            ]);
+            
+            return response()->json(['message' => 'Registrasi Sukses']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Gagal: ' . $e->getMessage()], 500);
+        }
+    }
+    
 
     
     public function updateUser($id)
