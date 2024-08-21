@@ -18,7 +18,6 @@ class CreateCommentsTable extends Migration
             $table->unsignedBigInteger('ticket_id');
             $table->unsignedBigInteger('user_id');
             $table->text('comment');
-            $table->string('attachment_name')->nullable();
             $table->string('attachment')->nullable();
             $table->timestamps();
 

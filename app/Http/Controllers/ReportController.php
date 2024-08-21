@@ -12,42 +12,22 @@ class ReportController extends Controller
 
     public function showReport(Request $request)
     {
-        $option = $request->input('option');
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
-        $category_id = $request->input('category_id');
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+        $category_id = $request->category_id;
 
-        switch ($option) {
-            case 'all':
-                $data = DB::table('tickets')
-                    ->join('users', 'tickets.user_id', '=', 'users.id')
-                    ->join('kategoris', 'tickets.kategori_id', '=', 'kategoris.id')
-                    ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name')
-                    ->get();
-                break;
-            case 'date':
-                $data = DB::table('tickets')
-                    ->whereDate('tickets.created_at', '>=', $startDate)
-                    ->whereDate('tickets.created_at', '<=', $endDate)
-
-                    ->join('users', 'tickets.user_id', '=', 'users.id')
-                    ->join('kategoris', 'tickets.kategori_id', '=', 'kategoris.id')
-                    ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name')
-                    ->get();
-                break;
-
-            case 'category':
-                $data = DB::table('tickets')
-                    ->where('kategori_id', $category_id)
-                    ->join('users', 'tickets.user_id', '=', 'users.id')
-                    ->join('kategoris', 'tickets.kategori_id', '=', 'kategoris.id')
-                    ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name')
-                    ->get();
-                break;
-
-            default:
-                return response()->json(['message' => 'Invalid option'], 400);
+        $data = DB::table('tickets')
+            ->join('users', 'tickets.user_id', '=', 'users.id')
+            ->join('kategoris', 'tickets.kategori_id', '=', 'kategoris.id')
+            ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name');
+        
+        if ($startDate && $endDate) {
+            $data->whereBetween('tickets.created_at', [$startDate, $endDate]);
         }
+        if ($category_id) {
+            $data->where('category_id', $category_id);
+        }
+        
 
         return $this->successResponse($data);
     }

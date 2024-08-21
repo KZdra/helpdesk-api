@@ -28,10 +28,17 @@ class AuthController extends Controller
      */
 
     
-    public function getUsers(){
-        $users = DB::table('users')->select('id','name','role','email')->get();
+     public function getUsers() {
+        $users = DB::table('users')->select('id', 'name', 'email', 'role_id')->get();
+    
+        foreach ($users as $user) {
+            $role = DB::table('roles')->where('id', $user->role_id)->value('name');
+            $user->role = $role;
+        }
+    
         return response()->json($users);
     }
+    
     public function getUser($id) {
         $user = DB::table('users')->where('id', $id)->first();
         if ($user) {
@@ -42,33 +49,42 @@ class AuthController extends Controller
 
     }
     
-    
-     public function register()
+    public function getRoles(){
+        $role = DB::table('roles')->get();
+        if ($role) {
+            return response()->json($role);
+        } else {
+            return response()->json(['message' => 'role not found'], 404);
+        }
+
+    }
+    public function register()
     {
         $validate = Validator::make(request()->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required',
-
+            'role_id' => 'required', // Ensure role_id is provided and exists in the roles table
         ]);
-
+    
         if ($validate->fails()) {
-            return response()->json($validate->messages());
+            return response()->json($validate->messages(), 400);
         }
-
-        $user = User::create([
-            'name' => request('name'),
-            'email' => request('email'),
-            'role' => 'client',
-            'password' => Hash::make(request('password')),
-        ]);
-
-        if ($user) {
+    
+        try {
+            DB::table('users')->insert([
+                'name'=> request('name'),
+                'email'=> request('email'),
+                'role_id'=> request('role_id'),
+                'password'=> Hash::make(request('password')),
+            ]);
+            
             return response()->json(['message' => 'Registrasi Sukses']);
-        } else {
-            return response()->json(['message' => 'Gagal']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Gagal: ' . $e->getMessage()], 500);
         }
     }
+    
 
     
     public function updateUser($id)
@@ -77,7 +93,7 @@ class AuthController extends Controller
         $validate = Validator::make(request()->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $id,
-            'role' => 'required',
+            'role_id' => 'required',
         ]);
     
         // If validation fails, return the error messages
@@ -102,29 +118,23 @@ class AuthController extends Controller
             $data = [
                 'name' => request('name'),
                 'email' => request('email'),
-                'role' => request('role'),
+                'role_id' => request('role_id'),
             ];
     
-            // If password is provided, hash it and include in the update data
             if (request('password')) {
                 $data['password'] = Hash::make(request('password'));
             }
     
-            // Update the user in the database
             $updated = DB::table('users')
                 ->where('id', $id)
                 ->update($data);
     
-            // Check if the update was successful
             if ($updated) {
-                DB::commit(); // Commit the transaction
+                DB::commit(); 
                 return response()->json(['message' => 'User updated successfully']);
-            } else {
-                DB::rollBack(); // Rollback the transaction
-                return response()->json(['message' => 'Failed to update user'], 500);
-            }
+            } 
         } catch (\Exception $e) {
-            DB::rollBack(); // Rollback the transaction on error
+            DB::rollBack(); 
             return response()->json(['message' => 'Failed to update user', 'error' => $e->getMessage()], 500);
         }
     }
@@ -148,8 +158,10 @@ class AuthController extends Controller
         if (! $token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-
-        return $this->respondWithToken($token);
+        $user= auth()->user();
+        $role = DB::table('roles')->where('id', $user->role_id)->value('name');
+        $user->role =$role;
+        return $this->respondWithToken($token,$user);
     }
     
     /**
@@ -157,10 +169,10 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function me()
-    {
-        return response()->json(auth()->user());
-    }
+    // public function me()
+    // {
+    //     return response()->json(auth()->user());
+    // }
 
     /**
      * Log the user out (Invalidate the token).
@@ -181,7 +193,10 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth()->refresh());
+        $user= auth()->user();
+        $role = DB::table('roles')->where('id', $user->role_id)->value('name');
+        $user->role =$role;
+        return $this->respondWithToken(auth()->refresh(),$user);
     }
 
     /**
@@ -191,12 +206,13 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondWithToken($token)
+    protected function respondWithToken($token ,$user)
     {
         return response()->json([
             'access_token' => $token,
+            'user'=> $user,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 1440
         ]);
     }
 }

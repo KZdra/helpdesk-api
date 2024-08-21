@@ -20,52 +20,50 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
-    //Auth
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('logout', [AuthController::class, 'logout']);
-    Route::post('refresh', [AuthController::class, 'refresh']);
-    Route::post('me', [AuthController::class, 'me']);
-    //EndAuth
-
+    // Auth routes...
+      //Auth
+      Route::post('register', [AuthController::class, 'register']);
+      Route::post('login', [AuthController::class, 'login']);
+      Route::post('logout', [AuthController::class, 'logout']);
+      Route::post('refresh', [AuthController::class, 'refresh']);
+    //   Route::post('me', [AuthController::class, 'me']);
+      //EndAuth
     // Tickets
     Route::prefix('tickets')->group(function () {
-
         Route::get('/', [TicketController::class, 'getTickets']);
         Route::post('/', [TicketController::class, 'createTicket']);
-        Route::put('/{ticket_number}', [TicketController::class, 'updateTicketStatus']);
+        Route::put('/{ticket_number}', [TicketController::class, 'updateTicketStatus'])->middleware('roleCheck:1,2');
         Route::delete('/{ticket_number}', [TicketController::class, 'deleteTicket']);
         Route::get('/{ticket_number}', [TicketController::class, 'getTicket']);
         Route::get('/download/{ticket_number}', [TicketController::class, 'downloadAttachment']);
     });
-
-
-    //
+    // Kategori routes...
     Route::prefix('kategoris')->group(function () {
-
-        Route::post('/', [KategoriController::class, 'createKategori']);
-        Route::get('/', [KategoriController::class, 'getKategoris']);
+        Route::post('/', [KategoriController::class, 'createKategori'])->middleware('roleCheck:1');
+        Route::get('/', [KategoriController::class, 'getKategoris'])->middleware('roleCheck:1');
         Route::get('/active', [KategoriController::class, 'getActiveKategoris']);
-        Route::put('/{id}', [KategoriController::class, 'updateKategori']);
-        Route::get('/{id}', [KategoriController::class, 'getKategori']);
-        Route::delete('/{id}', [KategoriController::class, 'deleteKategori']);
+        Route::put('/{id}', [KategoriController::class, 'updateKategori'])->middleware('roleCheck:1');
+        Route::get('/{id}', [KategoriController::class, 'getKategori'])->middleware('roleCheck:1');
+        Route::delete('/{id}', [KategoriController::class, 'deleteKategori'])->middleware('roleCheck:1');
     });
-    //Users
-    Route::prefix('users')->group(function () {
+
+    // Users routes...
+    Route::prefix('users')->middleware('roleCheck:1')->group(function () {
         Route::get('/', [AuthController::class, 'getUsers']);
+        Route::get('/roles', [AuthController::class,'getRoles']);
         Route::get('/{id}', [AuthController::class, 'getUser']);
         Route::put('/{id}', [AuthController::class, 'updateUser']);
         Route::delete('/{id}', [AuthController::class, 'deleteUser']);
     });
-    //USERs Fetch
 
+    // Report routes...
+    Route::get('/report', [ReportController::class, 'showReport'])->middleware('roleCheck:1');
 
-    //report
-    Route::get('/report', [ReportController::class, 'showReport']);
-
-    route::prefix('comment')->group(function () {
+    // Comment routes...
+    Route::prefix('comment')->middleware('roleCheck:1,2,3')->group(function () {
         Route::get('/{ticket_id}', [CommentController::class, 'getComments']);
         Route::post('/', [CommentController::class, 'createComment']);
         Route::get('/download/{id}', [CommentController::class, 'downloadCommentAttachment']);
     });
 });
+
