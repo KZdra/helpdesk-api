@@ -16,19 +16,20 @@ class ReportController extends Controller
         $endDate = $request->end_date;
         $category_id = $request->category_id;
 
-        $data = DB::table('tickets')
+        $query = DB::table('tickets')
             ->join('users', 'tickets.user_id', '=', 'users.id')
             ->join('kategoris', 'tickets.kategori_id', '=', 'kategoris.id')
-            ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name');
-        
-        if ($startDate && $endDate) {
-            $data->whereBetween('tickets.created_at', [$startDate, $endDate]);
-        }
-        if ($category_id) {
-            $data->where('category_id', $category_id);
-        }
-        
+            ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name');        
+            
+            if ($startDate && $endDate) {
+                $query->whereBetween('tickets.created_at', [$startDate, $endDate]);
+            }
+              if ($category_id) {
+            $query->where('kategori_id', $category_id);
+        } 
 
+        $data= $query->get();
+      
         return $this->successResponse($data);
     }
 }
