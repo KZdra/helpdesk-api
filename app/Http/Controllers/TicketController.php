@@ -63,6 +63,66 @@ class TicketController extends Controller
         }
     }
 
+    public function generateTicketNumber()
+{
+    // Start a DB transaction
+    DB::beginTransaction();
+
+    try {
+        // Get the current date in the desired format (year, month, day)
+        $date = date('ymd'); // e.g., '240828' for August 28, 2024
+
+        // Retrieve the numbering record for the current date
+        $numbering = DB::table('numberings')
+            ->whereDate('created_at', now()->format('Y-m-d'))
+            ->lockForUpdate()
+            ->first();
+
+        if ($numbering) {
+            // If a numbering record exists for today, increment the sequence number
+            $nextSequenceNumber = $numbering->sequence_number + 1;
+
+            // Update the sequence number in the numbering table
+            DB::table('numberings')
+                ->where('id', $numbering->id)
+                ->update(['sequence_number' => $nextSequenceNumber]);
+        } else {
+            // If no numbering record exists for today, create one starting with sequence 1
+            $nextSequenceNumber = 1;
+
+            $numberingId = DB::table('numberings')->insertGetId([
+                'sequence_number' => $nextSequenceNumber,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        // Format the next sequential number to be three digits with leading zeros
+        $nextSequenceNumberFormatted = str_pad($nextSequenceNumber, 3, '0', STR_PAD_LEFT);
+
+        // Generate the new ticket number
+        $ticketNumber = 'TIX-' . $date . $nextSequenceNumberFormatted;
+
+        // If we created a new numbering record, use its ID
+        if (!isset($numberingId)) {
+            $numberingId = $numbering->id;
+        }
+
+        // Commit the transaction
+        DB::commit();
+
+        return [
+            'ticket_number' => $ticketNumber,
+            'numbering_id' => $numberingId
+        ];
+    } catch (\Exception $e) {
+        // Rollback the transaction on error
+        DB::rollBack();
+        throw $e; // Re-throw the exception for further handling
+    }
+}
+
+
     public function createTicket(Request $request)
     {
         $userId = Auth::id();
@@ -75,13 +135,18 @@ class TicketController extends Controller
         DB::beginTransaction();
 
         try {
+
+            $ticketData = $this->generateTicketNumber();
+
             if ($request->hasFile('attachment')) {
                 $originalFileName = $request->file('attachment')->getClientOriginalName();
                 $filePath = $request->file('attachment')->storeAs('attachments', $originalFileName, 'public');
             }
 
-            $newTicketId = DB::table('tickets')->insertGetId([
+            DB::table('tickets')->insert([
                 'user_id' => $userId,
+                'ticket_number'=> $ticketData['ticket_number'],
+                'numering_id' => $ticketData['numbering_id'],
                 'status' => 'open',
                 'kategori_id'=> $request->kategori_id,
                 'issue' => $request->issue,
@@ -90,15 +155,11 @@ class TicketController extends Controller
                 'created_at' => now(),
             ]);
 
-            $ticketNumber = 'TIX-' . str_pad($newTicketId, 4, '0', STR_PAD_LEFT);
 
-            DB::table('tickets')
-                ->where('id_ticket', $newTicketId)
-                ->update(['ticket_number' => $ticketNumber]);
-
+           
             DB::commit();
 
-            return $this->successResponse(['ticket_number' => $ticketNumber], 'Ticket created successfully', 201);
+            return $this->successResponse(['ticket_number' => $ticketData['ticket_number']], 'Ticket created successfully', 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->errorResponse($e);

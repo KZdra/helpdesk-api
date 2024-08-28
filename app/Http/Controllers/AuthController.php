@@ -89,32 +89,26 @@ class AuthController extends Controller
     
     public function updateUser($id)
     {
-        // Validate the input data
         $validate = Validator::make(request()->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $id,
             'role_id' => 'required',
         ]);
     
-        // If validation fails, return the error messages
         if ($validate->fails()) {
             return response()->json($validate->messages(), 400);
         }
     
-        // Start a database transaction
         DB::beginTransaction();
     
         try {
-            // Find the user by ID
             $user = DB::table('users')->where('id', $id)->first();
     
-            // If user not found, return an error message
             if (!$user) {
-                DB::rollBack(); // Rollback the transaction
+                DB::rollBack();
                 return response()->json(['message' => 'User not found'], 404);
             }
     
-            // Prepare data for updating
             $data = [
                 'name' => request('name'),
                 'email' => request('email'),
