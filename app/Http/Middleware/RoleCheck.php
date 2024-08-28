@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Middleware;
 
 use Closure;
@@ -12,10 +13,10 @@ class RoleCheck
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
-     * @param  string[]  ...$roles
+     * @param  int[]  ...$roleIds
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, ...$roles)
+    public function handle(Request $request, Closure $next, ...$roleIds)
     {
         if (!Auth::check()) {
             return redirect('login');
@@ -23,7 +24,7 @@ class RoleCheck
 
         $user = Auth::user();
 
-        if (!in_array($user->role, $roles)) {
+        if (!in_array($user->role_id, $roleIds)) {
             return response()->json(['message' => 'You do not have permission to access this resource.'], 403);
         }
 

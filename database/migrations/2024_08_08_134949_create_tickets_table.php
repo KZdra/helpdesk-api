@@ -15,18 +15,20 @@ class CreateTicketsTable extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->bigIncrements('id_ticket');
-            $table->string('ticket_number')->nullable()->unique();
+            $table->string('ticket_number')->unique();
+            $table->unsignedBigInteger('numbering_id')->nullable()->unique();
             $table->unsignedBigInteger('user_id');
             $table->enum('status', ['open', 'in_progress', 'closed'])->default('open');
             $table->unsignedBigInteger('kategori_id');
             $table->string('subject');
             $table->text('issue');
-            $table->string('attachment_name')->nullable(); 
             $table->string('attachment')->nullable(); 
             $table->string('assign_by')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('kategori_id')->references('id')->on('kategoris')->onDelete('cascade'); // Ensure this matches the kategoris table structure
+            $table->foreign('kategori_id')->references('id')->on('kategoris')->onDelete('cascade');
+            $table->foreign('numbering_id')->references('id')->on('numberings')->onDelete('cascade'); 
+
         });
     }
 

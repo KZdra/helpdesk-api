@@ -32,34 +32,35 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::prefix('tickets')->group(function () {
         Route::get('/', [TicketController::class, 'getTickets']);
         Route::post('/', [TicketController::class, 'createTicket']);
-        Route::put('/{ticket_number}', [TicketController::class, 'updateTicketStatus'])->middleware('roleCheck:admin,support');
+        Route::put('/{ticket_number}', [TicketController::class, 'updateTicketStatus'])->middleware('roleCheck:1,2');
         Route::delete('/{ticket_number}', [TicketController::class, 'deleteTicket']);
         Route::get('/{ticket_number}', [TicketController::class, 'getTicket']);
         Route::get('/download/{ticket_number}', [TicketController::class, 'downloadAttachment']);
     });
     // Kategori routes...
     Route::prefix('kategoris')->group(function () {
-        Route::post('/', [KategoriController::class, 'createKategori'])->middleware('roleCheck:admin');
-        Route::get('/', [KategoriController::class, 'getKategoris'])->middleware('roleCheck:admin');
+        Route::post('/', [KategoriController::class, 'createKategori'])->middleware('roleCheck:1');
+        Route::get('/', [KategoriController::class, 'getKategoris'])->middleware('roleCheck:1');
         Route::get('/active', [KategoriController::class, 'getActiveKategoris']);
-        Route::put('/{id}', [KategoriController::class, 'updateKategori'])->middleware('roleCheck:admin');
-        Route::get('/{id}', [KategoriController::class, 'getKategori'])->middleware('roleCheck:admin');
-        Route::delete('/{id}', [KategoriController::class, 'deleteKategori'])->middleware('roleCheck:admin');
+        Route::put('/{id}', [KategoriController::class, 'updateKategori'])->middleware('roleCheck:1');
+        Route::get('/{id}', [KategoriController::class, 'getKategori'])->middleware('roleCheck:1');
+        Route::delete('/{id}', [KategoriController::class, 'deleteKategori'])->middleware('roleCheck:1');
     });
 
     // Users routes...
-    Route::prefix('users')->middleware('roleCheck:admin')->group(function () {
+    Route::prefix('users')->middleware('roleCheck:1')->group(function () {
         Route::get('/', [AuthController::class, 'getUsers']);
+        Route::get('/roles', [AuthController::class,'getRoles']);
         Route::get('/{id}', [AuthController::class, 'getUser']);
         Route::put('/{id}', [AuthController::class, 'updateUser']);
         Route::delete('/{id}', [AuthController::class, 'deleteUser']);
     });
 
     // Report routes...
-    Route::get('/report', [ReportController::class, 'showReport'])->middleware('roleCheck:admin');
+    Route::get('/report', [ReportController::class, 'showReport'])->middleware('roleCheck:1');
 
     // Comment routes...
-    Route::prefix('comment')->middleware('roleCheck:admin,support,client')->group(function () {
+    Route::prefix('comment')->middleware('roleCheck:1,2,3')->group(function () {
         Route::get('/{ticket_id}', [CommentController::class, 'getComments']);
         Route::post('/', [CommentController::class, 'createComment']);
         Route::get('/download/{id}', [CommentController::class, 'downloadCommentAttachment']);
