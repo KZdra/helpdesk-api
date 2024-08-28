@@ -10,7 +10,7 @@ class CreateNumberingsTable extends Migration
     {
         Schema::create('numberings', function (Blueprint $table) {
             $table->id(); // Primary key
-            $table->integer('sequence_number')->default(0); // This could be used to store a sequence number
+            $table->string('no_ticket'); // This could be used to store a sequence number
             $table->timestamps();
         });
     }
