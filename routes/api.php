@@ -77,7 +77,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 
     Route::prefix('faqs')->group(function () {
         Route::get('/', [FaqController::class,'getFaqs']);
-        Route::get('/{id}', [FaqController::class,'getFaq'])->middleware('roleCheck:1,2');
+        Route::get('/{id}', [FaqController::class,'getFaq'])->middleware('roleCheck:1');
         Route::post('/', [FaqController::class,'postFaqs'])->middleware('roleCheck:1');
         Route::put('/{id}', [FaqController::class,'updateFaq'])->middleware('roleCheck:1');
         Route::delete('/{id}', [FaqController::class,'deleteFaq'])->middleware('roleCheck:1');
