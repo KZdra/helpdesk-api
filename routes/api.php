@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\ReportController;
@@ -72,6 +73,14 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
         Route::get('/users', [StatisticController::class,'getUsersStatistics'])->middleware('roleCheck:1');
         Route::get('/tickets', [StatisticController::class,'getTicketStatistics'])->middleware('roleCheck:1,2');;
         Route::get('/usertickets', [StatisticController::class,'getTicketStatisticsByUser']);
+    });
+
+    Route::prefix('faqs')->group(function () {
+        Route::get('/', [FaqController::class,'getFaqs']);
+        Route::get('/{id}', [FaqController::class,'getFaq'])->middleware('roleCheck:1,2');
+        Route::post('/', [FaqController::class,'postFaqs'])->middleware('roleCheck:1');
+        Route::put('/{id}', [FaqController::class,'updateFaq'])->middleware('roleCheck:1');
+        Route::delete('/{id}', [FaqController::class,'deleteFaq'])->middleware('roleCheck:1');
     });
 
 });
