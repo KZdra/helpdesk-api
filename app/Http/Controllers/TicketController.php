@@ -63,6 +63,29 @@ class TicketController extends Controller
         }
     }
 
+    public function getUserTickets()
+    {
+        $userId =Auth::id();
+        try {
+                $tickets = DB::table('tickets')
+                ->join('users', 'tickets.user_id', '=', 'users.id')
+                ->join('kategoris', 'tickets.kategori_id', '=', 'kategoris.id')
+                ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name')
+                ->where('tickets.user_id', $userId)
+                ->get();
+            
+                foreach ($tickets as $ticket) {
+                    if ($ticket->attachment) {
+                        $ticket->attachment_url = url('storage/attachments/' . $ticket->attachment);
+                    }
+                }
+        
+            return $this->successResponse($tickets);
+        } catch (\Exception $e) {
+            return $this->errorResponse('Failed to retrieve tickets. Please try again.');
+        }
+    }
+
     public function generateTicketNumber()
     {
         DB::beginTransaction();

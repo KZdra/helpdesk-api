@@ -5,7 +5,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\ReportController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\StatisticController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,6 +32,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::prefix('tickets')->group(function () {
         Route::get('/', [TicketController::class, 'getTickets']);
         Route::post('/', [TicketController::class, 'createTicket']);
+        Route::get('/user', [TicketController::class,'getUserTickets']);
         Route::put('/{ticket_number}', [TicketController::class, 'updateTicketStatus'])->middleware('roleCheck:1,2');
         Route::delete('/{ticket_number}', [TicketController::class, 'deleteTicket']);
         Route::get('/{ticket_number}', [TicketController::class, 'getTicket']);
@@ -65,5 +66,13 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
         Route::post('/', [CommentController::class, 'createComment']);
         Route::get('/download/{id}', [CommentController::class, 'downloadCommentAttachment']);
     });
+    
+    // Statistic
+    Route::prefix('statistics')->group(function () {
+        Route::get('/users', [StatisticController::class,'getUsersStatistics'])->middleware('roleCheck:1');
+        Route::get('/tickets', [StatisticController::class,'getTicketStatistics'])->middleware('roleCheck:1,2');;
+        Route::get('/usertickets', [StatisticController::class,'getTicketStatisticsByUser']);
+    });
+
 });
 

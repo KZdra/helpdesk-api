@@ -63,7 +63,7 @@ class AuthController extends Controller
         $validate = Validator::make(request()->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'password' => 'required',
+            'password' => 'required|confirmed',
             'role_id' => 'required', // Ensure role_id is provided and exists in the roles table
         ]);
     
