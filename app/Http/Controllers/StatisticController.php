@@ -20,14 +20,15 @@ class StatisticController extends Controller
     {
         $ticketCounts = DB::table('tickets')
             ->select(DB::raw('status, COUNT(*) as count'))
-            ->whereIn('status', ['closed', 'open'])
+            ->whereIn('status', ['closed', 'open','in_progress'])
             ->groupBy('status')
             ->get();
     
         // Mengubah hasil query menjadi array dengan keys 'closed' dan 'open'
         $ticketStats = [
             'closed' => 0,
-            'open' => 0
+            'open' => 0,
+            'in_progress'=> 0
         ];
     
         foreach ($ticketCounts as $ticket) {
@@ -43,14 +44,15 @@ class StatisticController extends Controller
         $ticketCounts = DB::table('tickets')
         ->where('user_id', $user_id)
         ->select(DB::raw('status, COUNT(*) as count'))
-        ->whereIn('status', ['closed', 'open'])
+        ->whereIn('status', ['closed', 'open','in_progress'])
         ->groupBy('status')
         ->get();
 
     // Mengubah hasil query menjadi array dengan keys 'closed' dan 'open'
     $ticketStats = [
         'closed' => 0,
-        'open' => 0
+        'open' => 0,
+        'in_progress'=> 0
     ];
 
     foreach ($ticketCounts as $ticket) {
