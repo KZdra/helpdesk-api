@@ -19,6 +19,7 @@ class CreateTicketsTable extends Migration
             $table->unsignedBigInteger('numbering_id')->nullable()->unique();
             $table->unsignedBigInteger('user_id');
             $table->enum('status', ['open', 'in_progress', 'closed'])->default('open');
+            $table->unsignedBigInteger('priority_id');
             $table->unsignedBigInteger('kategori_id');
             $table->string('subject');
             $table->text('issue');
@@ -28,6 +29,7 @@ class CreateTicketsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('kategori_id')->references('id')->on('kategoris')->onDelete('cascade');
             $table->foreign('numbering_id')->references('id')->on('numberings')->onDelete('cascade'); 
+            $table->foreign('priority_id')->references('id')->on('priority')->onDelete('cascade');
 
         });
     }

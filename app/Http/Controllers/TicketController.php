@@ -22,7 +22,8 @@ class TicketController extends Controller
             $ticket = DB::table('tickets')
                 ->join('users', 'tickets.user_id', '=', 'users.id')
                 ->join('kategoris', 'tickets.kategori_id', '=', 'kategoris.id')
-                ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name')
+                ->join('priority', 'tickets.priority_id', '=', 'priority.id')
+                ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name', 'priority.priority_name as priority')
                 ->where('tickets.ticket_number', $ticket_number)
                 ->first();
 
@@ -47,7 +48,8 @@ class TicketController extends Controller
             $tickets = DB::table('tickets')
                 ->join('users', 'tickets.user_id', '=', 'users.id')
                 ->join('kategoris', 'tickets.kategori_id', '=', 'kategoris.id')
-                ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name')
+                ->join('priority', 'tickets.priority_id', '=', 'priority.id')
+                ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name', 'priority.priority_name as priority')
                 ->get();
 
 
@@ -69,8 +71,8 @@ class TicketController extends Controller
         try {
                 $tickets = DB::table('tickets')
                 ->join('users', 'tickets.user_id', '=', 'users.id')
-                ->join('kategoris', 'tickets.kategori_id', '=', 'kategoris.id')
-                ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name')
+                ->join('priority', 'tickets.priority_id', '=', 'priority.id')
+                ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name', 'priority.priority_name as priority')
                 ->where('tickets.user_id', $userId)
                 ->get();
             
@@ -146,6 +148,7 @@ class TicketController extends Controller
                 'user_id' => $userId,
                 'ticket_number'=> $ticketData['ticket_number'],
                 'numbering_id' => $ticketData['numbering_id'],
+                'priority_id' => $request->priority_id,
                 'status' => 'open',
                 'kategori_id'=> $request->kategori_id,
                 'issue' => $request->issue,

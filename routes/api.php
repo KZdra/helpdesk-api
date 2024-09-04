@@ -5,6 +5,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\PriorityController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StatisticController;
 use Illuminate\Support\Facades\Route;
@@ -83,5 +84,9 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
         Route::delete('/{id}', [FaqController::class,'deleteFaq'])->middleware('roleCheck:1');
     });
 
+
+    Route::prefix('priority')->group(function () {
+        Route::get('/', [PriorityController::class,'fetchPriority']);
+    });
 });
 

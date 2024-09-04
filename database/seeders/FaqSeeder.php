@@ -46,6 +46,38 @@ class FaqSeeder extends Seeder
             [
                 'question' => 'Apa yang harus dilakukan jika tidak ada tanggapan pada ticket?',
                 'answer' => 'Jika ticket Anda tidak mendapat tanggapan dalam waktu yang wajar, Anda bisa menghubungi tim support langsung melalui kontak yang disediakan atau mengirim pengingat melalui sistem ticketing.'
+            ],
+            [
+                'question' => 'Apa itu prioritas tiket dalam sistem ticketing?',
+                'answer' => 'Prioritas tiket menentukan tingkat urgensi atau kepentingan dari setiap tiket atau masalah yang dilaporkan. Ini membantu tim untuk mengidentifikasi dan menangani masalah yang paling mendesak terlebih dahulu.'
+            ],
+            [
+                'question' => 'Apa perbedaan antara prioritas Critical, Major, Normal, Minor, dan Trivial?',
+                'answer' => 'Prioritas "Critical" adalah untuk masalah yang sangat mendesak yang mempengaruhi seluruh sistem. "Major" untuk masalah serius yang mempengaruhi sebagian besar pengguna. "Normal" untuk masalah yang perlu diperbaiki tetapi tidak mendesak. "Minor" untuk masalah kecil atau bug yang tidak signifikan, dan "Trivial" untuk masalah yang sangat kecil dan tidak berdampak besar pada sistem.'
+            ],
+            [
+                'question' => 'Kapan saya harus menggunakan prioritas Critical untuk tiket saya?',
+                'answer' => 'Gunakan prioritas "Critical" ketika masalah menyebabkan sistem tidak bisa digunakan, ada bug keamanan serius, atau ketika masalah tersebut berdampak besar pada semua pengguna.'
+            ],
+            [
+                'question' => 'Bagaimana cara menentukan prioritas yang tepat untuk tiket saya?',
+                'answer' => 'Pertimbangkan dampak dan urgensi dari masalah yang Anda hadapi. Jika masalah mempengaruhi seluruh sistem atau mayoritas pengguna, pilih "Critical" atau "Major". Jika tidak terlalu mendesak, pilih "Normal", "Minor", atau "Trivial".'
+            ],
+            [
+                'question' => 'Apa yang dimaksud dengan prioritas Block dalam sistem ticketing?',
+                'answer' => 'Prioritas "Block" digunakan ketika pekerjaan tidak dapat dilanjutkan karena ada masalah lain yang menghambat, misalnya menunggu penyelesaian tiket lain atau masalah eksternal yang harus diselesaikan terlebih dahulu.'
+            ],
+            [
+                'question' => 'Apakah saya bisa mengubah prioritas tiket setelah diajukan?',
+                'answer' => 'Ya, Anda dapat mengubah prioritas tiket setelah diajukan. Silakan hubungi tim dukungan atau ubah melalui portal tiket jika fitur ini tersedia.'
+            ],
+            [
+                'question' => 'Mengapa tiket saya diberi prioritas Trivial?',
+                'answer' => 'Tiket Anda mungkin dianggap tidak mendesak atau masalahnya kecil yang tidak mempengaruhi fungsi utama sistem. Jika Anda merasa ini salah, Anda dapat meminta peninjauan ulang prioritas tiket Anda.'
+            ],
+            [
+                'question' => 'Bagaimana prioritas tiket mempengaruhi waktu penyelesaian masalah?',
+                'answer' => 'Tiket dengan prioritas lebih tinggi seperti "Critical" atau "Major" akan ditangani terlebih dahulu, sedangkan tiket dengan prioritas lebih rendah seperti "Minor" atau "Trivial" mungkin memakan waktu lebih lama untuk diselesaikan.'
             ]
         ];
 
