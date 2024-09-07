@@ -67,11 +67,12 @@ class TicketController extends Controller
 
     public function getUserTickets()
     {
-        $userId =Auth::id();
+        $userId = Auth::user()->id;
         try {
                 $tickets = DB::table('tickets')
                 ->join('users', 'tickets.user_id', '=', 'users.id')
                 ->join('priority', 'tickets.priority_id', '=', 'priority.id')
+                ->join('kategoris', 'tickets.kategori_id', '=', 'kategoris.id')
                 ->select('tickets.*', 'users.name as clientname', 'kategoris.nama_kategori as kategori_name', 'priority.priority_name as priority')
                 ->where('tickets.user_id', $userId)
                 ->get();
@@ -84,7 +85,7 @@ class TicketController extends Controller
         
             return $this->successResponse($tickets);
         } catch (\Exception $e) {
-            return $this->errorResponse('Failed to retrieve tickets. Please try again.');
+            return $this->errorResponse( $e->getMessage());
         }
     }
 
