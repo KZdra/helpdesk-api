@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -28,15 +29,40 @@ class AuthController extends Controller
      */
 
     
-     public function getUsers() {
-        $users = DB::table('users')->select('id', 'name', 'email', 'role_id')->get();
-    
-        foreach ($users as $user) {
-            $role = DB::table('roles')->where('id', $user->role_id)->value('name');
-            $user->role = $role;
+    public function getUsers(Request $request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+
+            $query = DB::table('users')
+                ->leftJoin('roles', 'users.role_id', '=', 'roles.id')
+                ->select('users.id', 'users.name', 'users.email', 'users.role_id', 'roles.name as role');
+
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('users.name', 'like', "%{$search}%")
+                      ->orWhere('users.email', 'like', "%{$search}%")
+                      ->orWhere('roles.name', 'like', "%{$search}%");
+                });
+            }
+
+            if ($request->filled('role_id')) {
+                $query->where('users.role_id', $request->role_id);
+            }
+
+            $query->orderBy('users.id', 'desc');
+
+            if ($request->input('paginate') === 'false' || $perPage === 'all') {
+                $users = $query->get();
+            } else {
+                $users = $query->paginate((int) $perPage);
+            }
+
+            return response()->json($users);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to fetch users: ' . $e->getMessage()], 500);
         }
-    
-        return response()->json($users);
     }
     
     public function getUser($id) {

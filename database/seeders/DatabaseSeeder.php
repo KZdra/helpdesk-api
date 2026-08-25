@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
         $this->call(UserSeeder::class);
         $this->call(FaqSeeder::class);
         $this->call(PrioritySeeder::class);
+        $this->call(DepartmentSeeder::class);
+        $this->call(SlaPolicySeeder::class);
 
     }
 }
